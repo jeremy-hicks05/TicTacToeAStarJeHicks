@@ -84,7 +84,7 @@ namespace TicTacToeAStarJeHicks
 
         public static void PrintAllNodes(Node node)
         {
-            foreach(Node n in node.ChildNodes)
+            foreach (Node n in node.ChildNodes)
             {
                 n.PrintNodeState();
                 PrintAllNodes(n);
@@ -124,7 +124,7 @@ namespace TicTacToeAStarJeHicks
         public void AddLayer()
         {
 
-            if (this.State.HasAResult 
+            if (this.State.HasAResult
                 //|| State.ExploredStates.Contains(this.State)
                 )
             {
@@ -271,12 +271,21 @@ namespace TicTacToeAStarJeHicks
 
         public void PrintNodeState()
         {
-            Console.WriteLine("Layer: " + LayerNumber);
+            int nextMove = 0;
+            //Console.WriteLine("Layer: " + LayerNumber);
+            Console.WriteLine("Type a number to select space:");
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    Console.Write(State.Tokens[i, j].LetterValue == Token.Letter.a ? " " : State.Tokens[i, j].LetterValue);
+                    if (State.Tokens[i, j].LetterValue == Token.Letter.a)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Green;
+                        Console.ForegroundColor = ConsoleColor.Black;
+                    }
+                    Console.Write(State.Tokens[i, j].LetterValue == Token.Letter.a ? nextMove++ : State.Tokens[i, j].LetterValue);
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    Console.ForegroundColor = ConsoleColor.White;
                     if (j < 2)
                     {
                         Console.Write("|");

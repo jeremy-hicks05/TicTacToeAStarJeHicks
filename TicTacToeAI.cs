@@ -60,7 +60,15 @@ namespace TicTacToeAStarJeHicks
         public Node GetBestMove(Node currentNode)
         {
             Node bestMove = null;
-            int bestValue = int.MinValue;
+            int bestValue = 0;
+            if (currentNode.Player == Token.Letter.X)
+            {
+                bestValue = int.MinValue;
+            }
+            else
+            {
+                bestValue = int.MaxValue;
+            }
 
             foreach (var child in currentNode.ChildNodes)
             {
