@@ -365,11 +365,11 @@
             while (gameNode != null && !gameNode.IsTerminal())
             {
                 gameNode.PrintNodeState();
-                gameNode = gameNode.ChildNodes[game.GetMove()];
+                gameNode = ticTac.GetBestMove(gameNode);
                 if (gameNode != null && !gameNode.IsTerminal())
                 {
                     gameNode.PrintNodeState();
-                    gameNode = ticTac.GetBestMove(gameNode);
+                    gameNode = gameNode.ChildNodes[game.GetMove()];
                 }
             }
 
@@ -394,7 +394,7 @@
             //thirdAIMove.PrintNodeState();
 
             //Node fourthHumanMove = thirdAIMove.ChildNodes[game.GetMove()]; // move by Human
-            //fourthHumanMove.PrintNodeState();
+            //fourthHumanMove.PrintNodeState();//
 
             //Node fourthAIMove = ticTac.GetBestMove(fourthHumanMove); // move by AI
             //fourthAIMove.PrintNodeState();
@@ -404,6 +404,8 @@
 
             gameNode.PrintNodeState();
             Console.WriteLine("Game complete!");
+            //Console.WriteLine(gameNode.Player + " wins!");
+            Console.ReadLine();
         }
     }
 }

@@ -33,7 +33,7 @@ namespace TicTacToeAStarJeHicks
                     //Console.WriteLine("Considering child within Minimax function:");
                     //child.PrintNodeState();
                     int childScore = Minimax(child, false);
-                    bestScore += Math.Max(bestScore, childScore);
+                    bestScore = Math.Max(bestScore, childScore);
                     //Console.WriteLine("Best score is...");
                     //Console.WriteLine(bestScore);
                 }
@@ -47,7 +47,7 @@ namespace TicTacToeAStarJeHicks
                     //Console.WriteLine("Considering child within Minimax function:");
                     //child.PrintNodeState();
                     int childScore = Minimax(child, true);
-                    bestScore += Math.Min(bestScore, childScore);
+                    bestScore = Math.Min(bestScore, childScore);
                     //Console.WriteLine("Best score is...");
                     //Console.WriteLine(bestScore);
                 }
@@ -60,23 +60,23 @@ namespace TicTacToeAStarJeHicks
         public Node GetBestMove(Node currentNode)
         {
             Node bestMove = null;
-            int bestValue = 0;
-            if (currentNode.Player == Token.Letter.X)
-            {
-                bestValue = int.MinValue;
-            }
-            else
-            {
-                bestValue = int.MaxValue;
-            }
+            int bestValue = int.MinValue;
+            //if (currentNode.Player == Token.Letter.X)
+            //{
+            //    bestValue = int.MinValue;
+            //}
+            //else
+            //{
+            //    bestValue = int.MaxValue;
+            //}
 
             foreach (var child in currentNode.ChildNodes)
             {
                 //Console.WriteLine("Considering child in GetBestMove:");
                 //child.PrintNodeState();
 
-                //int moveValue = Minimax(child, false);
-                int moveValue = Minimax(child, child.Player == Token.Letter.X);
+                int moveValue = Minimax(child, false);
+                //int moveValue = Minimax(child, currentNode.Player == Token.Letter.X);
 
                 //Console.WriteLine("Child");
                 //child.PrintNodeState();
@@ -100,6 +100,73 @@ namespace TicTacToeAStarJeHicks
 
             return bestMove; // Returns the optimal move for the AI
         }
+
+        // Minimax function
+        //public int Minimax(Node node, bool isMaximizingPlayer)
+        //{
+        //    if (node.IsTerminal())
+        //    {
+        //        return EvaluateGameState(node);
+        //    }
+
+        //    if (isMaximizingPlayer)
+        //    {
+        //        int bestScore = int.MinValue;
+        //        foreach (Node child in node.ChildNodes)
+        //        {
+        //            int childScore = Minimax(child, false);
+        //            bestScore = Math.Max(bestScore, childScore); // Update bestScore, do not sum
+        //        }
+        //        return bestScore;
+        //    }
+        //    else
+        //    {
+        //        int bestScore = int.MaxValue;
+        //        foreach (Node child in node.ChildNodes)
+        //        {
+        //            int childScore = Minimax(child, true);
+        //            bestScore = Math.Min(bestScore, childScore); // Update bestScore, do not sum
+        //        }
+        //        return bestScore;
+        //    }
+        //}
+
+        //// EvaluateGameState method
+        //public int EvaluateGameState(Node node)
+        //{
+        //    if (node.Winner == 1)
+        //        return 1; // X wins
+        //    else if (node.Winner == -1)
+        //        return -1; // O wins
+        //    else
+        //        return 0; // Draw
+        //}
+
+        //// GetBestMove function
+        //public Node GetBestMove(Node currentNode)
+        //{
+        //    Node bestMove = null;
+        //    int bestValue = (currentNode.Player == Token.Letter.X) ? int.MinValue : int.MaxValue;
+
+        //    foreach (var child in currentNode.ChildNodes)
+        //    {
+        //        int moveValue = Minimax(child, currentNode.Player == Token.Letter.O);
+
+        //        if (currentNode.Player == Token.Letter.X && moveValue > bestValue)
+        //        {
+        //            bestValue = moveValue;
+        //            bestMove = child;
+        //        }
+        //        else if (currentNode.Player == Token.Letter.O && moveValue < bestValue)
+        //        {
+        //            bestValue = moveValue;
+        //            bestMove = child;
+        //        }
+        //    }
+
+        //    return bestMove; // Returns the optimal move for the AI
+        //}
+
     }
 
 }
