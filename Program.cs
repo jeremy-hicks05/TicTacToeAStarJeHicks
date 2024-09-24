@@ -352,7 +352,58 @@
             //    Console.ReadLine();
             //}
 
-            Console.WriteLine("Done");
+            Console.WriteLine("Done building tree");
+
+            //Node.PrintAllNodes(rootNode);
+
+            TicTacToeAI ticTac = new TicTacToeAI(rootNode);
+
+            TicTacToeGame game = new TicTacToeGame();
+
+            Node gameNode = rootNode;
+
+            while (gameNode != null && !gameNode.IsTerminal())
+            {
+                gameNode.PrintNodeState();
+                gameNode = gameNode.ChildNodes[game.GetMove()];
+                if (gameNode != null && !gameNode.IsTerminal())
+                {
+                    gameNode.PrintNodeState();
+                    gameNode = ticTac.GetBestMove(gameNode);
+                }
+            }
+
+            //rootNode.PrintNodeState();
+
+            //Node firstHumanMove = rootNode.ChildNodes[game.GetMove()];
+            //firstHumanMove.PrintNodeState();
+
+            //Node firstAIMove = ticTac.GetBestMove(firstHumanMove); // move by AI
+            //firstAIMove.PrintNodeState();
+
+            //Node secondHumanMove = firstAIMove.ChildNodes[game.GetMove()]; // move by Human
+            //secondHumanMove.PrintNodeState();
+
+            //Node secondAIMove = ticTac.GetBestMove(secondHumanMove); // move by AI
+            //secondAIMove.PrintNodeState();
+
+            //Node thirdHumanhMove = secondAIMove.ChildNodes[0]; // move by Human
+            //thirdHumanhMove.PrintNodeState();
+
+            //Node thirdAIMove = ticTac.GetBestMove(thirdHumanhMove); // move by AI
+            //thirdAIMove.PrintNodeState();
+
+            //Node fourthHumanMove = thirdAIMove.ChildNodes[game.GetMove()]; // move by Human
+            //fourthHumanMove.PrintNodeState();
+
+            //Node fourthAIMove = ticTac.GetBestMove(fourthHumanMove); // move by AI
+            //fourthAIMove.PrintNodeState();
+
+            //Node fifthHumanMove = fourthAIMove.ChildNodes[game.GetMove()];
+            //fifthHumanMove.PrintNodeState();
+
+            gameNode.PrintNodeState();
+            Console.WriteLine("Game complete!");
         }
     }
 }

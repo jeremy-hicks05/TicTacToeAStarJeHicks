@@ -37,6 +37,11 @@ namespace TicTacToeAStarJeHicks
             Tokens = tokens;
         }
 
+        public State(Token.Letter[,] newBoard)
+        {
+            //Tokens = newBoard;
+        }
+
         public static List<State> ExploredStates = new List<State>();
         public Token[,] Tokens { get; set; } = new Token[3, 3];
         public bool HasAResult { get; set; }
