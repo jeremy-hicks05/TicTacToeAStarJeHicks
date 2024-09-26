@@ -28,121 +28,34 @@ namespace TicTacToeAStarJeHicks
             return s;
         }
 
+        private static bool CheckWin(State s)
+        {
+            // check horizontal, vertical, and diagonal win conditions
+            return (s.Tokens[0, 0].LetterValue != Token.Letter.a &&
+                    (s.Tokens[0, 0].LetterValue == s.Tokens[0, 1].LetterValue && s.Tokens[0, 1].LetterValue == s.Tokens[0, 2].LetterValue)) ||
+                   (s.Tokens[1, 0].LetterValue != Token.Letter.a &&
+                    (s.Tokens[1, 0].LetterValue == s.Tokens[1, 1].LetterValue && s.Tokens[1, 1].LetterValue == s.Tokens[1, 2].LetterValue)) ||
+                   (s.Tokens[2, 0].LetterValue != Token.Letter.a &&
+                    (s.Tokens[2, 0].LetterValue == s.Tokens[2, 1].LetterValue && s.Tokens[2, 1].LetterValue == s.Tokens[2, 2].LetterValue)) ||
+                   (s.Tokens[0, 0].LetterValue != Token.Letter.a &&
+                    (s.Tokens[0, 0].LetterValue == s.Tokens[1, 0].LetterValue && s.Tokens[1, 0].LetterValue == s.Tokens[2, 0].LetterValue)) ||
+                   (s.Tokens[0, 1].LetterValue != Token.Letter.a &&
+                    (s.Tokens[0, 1].LetterValue == s.Tokens[1, 1].LetterValue && s.Tokens[1, 1].LetterValue == s.Tokens[2, 1].LetterValue)) ||
+                   (s.Tokens[0, 2].LetterValue != Token.Letter.a &&
+                    (s.Tokens[0, 2].LetterValue == s.Tokens[1, 2].LetterValue && s.Tokens[1, 2].LetterValue == s.Tokens[2, 2].LetterValue)) ||
+                   (s.Tokens[1, 1].LetterValue != Token.Letter.a &&
+                    ((s.Tokens[0, 0].LetterValue == s.Tokens[1, 1].LetterValue && s.Tokens[1, 1].LetterValue == s.Tokens[2, 2].LetterValue) ||
+                     (s.Tokens[0, 2].LetterValue == s.Tokens[1, 1].LetterValue && s.Tokens[1, 1].LetterValue == s.Tokens[2, 0].LetterValue)));
+        }
+
         public static bool HasResult(State s)
         {
-            // check horizontal win
-            if (
-                (s.Tokens[0, 0].LetterValue != Token.Letter.a &&
-                (s.Tokens[0, 0].LetterValue == s.Tokens[0, 1].LetterValue &&
-                s.Tokens[0, 1].LetterValue == s.Tokens[0, 2].LetterValue)) ||
-                (s.Tokens[1, 0].LetterValue != Token.Letter.a &&
-                (s.Tokens[1, 0].LetterValue == s.Tokens[1, 1].LetterValue &&
-                s.Tokens[1, 1].LetterValue == s.Tokens[1, 2].LetterValue)) ||
-                (s.Tokens[2, 0].LetterValue != Token.Letter.a &&
-                 (s.Tokens[2, 0].LetterValue == s.Tokens[2, 1].LetterValue &&
-                s.Tokens[2, 1].LetterValue == s.Tokens[2, 2].LetterValue)))
-            {
-                //Console.WriteLine("Winner found!");
-                //s.PrintNodeState();
-                //Console.ReadLine();
-                return true;
-            }
-
-            // check vertical win
-            else if (
-                (s.Tokens[0, 0].LetterValue != Token.Letter.a &&
-                (s.Tokens[0, 0].LetterValue == s.Tokens[1, 0].LetterValue &&
-                s.Tokens[1, 0].LetterValue == s.Tokens[2, 0].LetterValue)) ||
-                (s.Tokens[0, 1].LetterValue != Token.Letter.a &&
-                (s.Tokens[0, 1].LetterValue == s.Tokens[1, 1].LetterValue &&
-                s.Tokens[1, 1].LetterValue == s.Tokens[2, 1].LetterValue)) ||
-                (s.Tokens[0, 2].LetterValue != Token.Letter.a &&
-                 (s.Tokens[0, 2].LetterValue == s.Tokens[1, 2].LetterValue &&
-                s.Tokens[1, 2].LetterValue == s.Tokens[2, 2].LetterValue)))
-            {
-                //Console.WriteLine("Winner found!");
-                //s.PrintNodeState();
-                //Console.ReadLine();
-                return true;
-            }
-
-            // check diagonal win
-            else if (
-                s.Tokens[1, 1].LetterValue != Token.Letter.a &&
-                (
-                (s.Tokens[0, 0].LetterValue == s.Tokens[1, 1].LetterValue &&
-                s.Tokens[1, 1].LetterValue == s.Tokens[2, 2].LetterValue) ||
-                (s.Tokens[0, 2].LetterValue == s.Tokens[1, 1].LetterValue &&
-                s.Tokens[1, 1].LetterValue == s.Tokens[2, 0].LetterValue))
-                )
-            {
-                //Console.WriteLine("Winner found!");
-                //s.PrintNodeState();
-                return true;
-            }
-            else if (s.GetOpenCoordinates().Count == 0)
-            {
-                return true;
-            }
-            return false;
+            return CheckWin(s) || s.GetOpenCoordinates().Count == 0;
         }
+
         public static bool HasAWinner(State s)
         {
-            // check horizontal win
-            if (
-                (s.Tokens[0, 0].LetterValue != Token.Letter.a &&
-                (s.Tokens[0, 0].LetterValue == s.Tokens[0, 1].LetterValue &&
-                s.Tokens[0, 1].LetterValue == s.Tokens[0, 2].LetterValue)) ||
-                (s.Tokens[1, 0].LetterValue != Token.Letter.a &&
-                (s.Tokens[1, 0].LetterValue == s.Tokens[1, 1].LetterValue &&
-                s.Tokens[1, 1].LetterValue == s.Tokens[1, 2].LetterValue)) ||
-                (s.Tokens[2, 0].LetterValue != Token.Letter.a &&
-                 (s.Tokens[2, 0].LetterValue == s.Tokens[2, 1].LetterValue &&
-                s.Tokens[2, 1].LetterValue == s.Tokens[2, 2].LetterValue)))
-            {
-                //Console.WriteLine("Winner found!");
-                //s.PrintNodeState();
-                //Console.ReadLine();
-                return true;
-            }
-
-            // check vertical win
-            else if (
-                (s.Tokens[0, 0].LetterValue != Token.Letter.a &&
-                (s.Tokens[0, 0].LetterValue == s.Tokens[1, 0].LetterValue &&
-                s.Tokens[1, 0].LetterValue == s.Tokens[2, 0].LetterValue)) ||
-                (s.Tokens[0, 1].LetterValue != Token.Letter.a &&
-                (s.Tokens[0, 1].LetterValue == s.Tokens[1, 1].LetterValue &&
-                s.Tokens[1, 1].LetterValue == s.Tokens[2, 1].LetterValue)) ||
-                (s.Tokens[0, 2].LetterValue != Token.Letter.a &&
-                 (s.Tokens[0, 2].LetterValue == s.Tokens[1, 2].LetterValue &&
-                s.Tokens[1, 2].LetterValue == s.Tokens[2, 2].LetterValue)))
-            {
-                //Console.WriteLine("Winner found!");
-                //s.PrintNodeState();
-                //Console.ReadLine();
-                return true;
-            }
-
-            // check diagonal win
-            else if (
-                s.Tokens[1, 1].LetterValue != Token.Letter.a &&
-                (
-                (s.Tokens[0, 0].LetterValue == s.Tokens[1, 1].LetterValue &&
-                s.Tokens[1, 1].LetterValue == s.Tokens[2, 2].LetterValue) ||
-                (s.Tokens[0, 2].LetterValue == s.Tokens[1, 1].LetterValue &&
-                s.Tokens[1, 1].LetterValue == s.Tokens[2, 0].LetterValue))
-                )
-            {
-                //Console.WriteLine("Winner found!");
-                //s.PrintNodeState();
-                return true;
-            }
-            else if (s.GetOpenCoordinates().Count == 0)
-            {
-                return false;
-            }
-            return false;
+            return CheckWin(s);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -33,8 +34,8 @@ namespace TicTacToeAStarJeHicks
         }
         public Node Parent { get; set; }
         public List<Node> ChildNodes { get; set; } = new List<Node>();
-        public Token.Letter Player = new Token.Letter();
-        public int Winner { get; set; }
+        //public Token.Letter Player = new Token.Letter();
+        //public int Winner { get; set; }
         public int LayerNumber { get; set; }
 
 
@@ -44,7 +45,6 @@ namespace TicTacToeAStarJeHicks
         // ChatGPT Section
 
         public State[,] Tokens { get; private set; } // 2D array representing the board state
-        //public Token.Letter CurrentPlayer { get; private set; } // Current player making the move
 
         public int gCost { get; set; }
         public int hCost { get; set; }
@@ -61,26 +61,21 @@ namespace TicTacToeAStarJeHicks
         public Node(Token[,] tokens, Token.Letter currentPlayer)
         {
             State.Tokens = tokens; // Assign the board state
-            Player = currentPlayer; // Assign the current player
+            //Player = currentPlayer; // Assign the current player
         }
 
         public Node(State[,] tokens, Token.Letter currentPlayer)
         {
             Tokens = tokens; // Assign the board state
-            Player = currentPlayer;
+            //Player = currentPlayer;
             //CurrentPlayer = currentPlayer; // Assign the current player
         }
 
         public Node(Token.Letter[,] newBoard, Token.Letter letter)
         {
-            Player = letter;
+            //Player = letter;
             this.State = new State(newBoard);
         }
-
-        //public Node(State state)
-        //{
-        //    State = state;
-        //}
 
         public static void PrintAllNodes(Node node)
         {
@@ -98,20 +93,11 @@ namespace TicTacToeAStarJeHicks
             if (currentNode.State.HasAResult)
             {
                 results.Add(currentNode);
-
-                // add result to parent
-                currentNode.Parent.Winner = currentNode.Winner;
-                results.Add(currentNode.Parent);
-
-                //Console.WriteLine($"Result Found - ID: {currentNode.ID}, Winner: {currentNode.Winner}");
-                //currentNode.PrintNodeState();
-                //Console.ReadLine();
-
                 return;
             }
 
             // Add a new layer of children to the current node
-            currentNode.AddLayer();
+            currentNode.AddLayer(currentNode.GetNextTurn());
 
             // Recursively explore each child node
             foreach (var child in currentNode.ChildNodes)
@@ -121,127 +107,85 @@ namespace TicTacToeAStarJeHicks
         }
         // end from ChatGPT
 
-        public void AddLayer()
+        public void AddLayer(Token token)
         {
-
-            if (this.State.HasAResult
-                //|| State.ExploredStates.Contains(this.State)
-                )
+            if (LayerNumber >= StartingLayer)
             {
-                if (LayerNumber >= StartingLayer)
-                {
-                    Console.Clear();
-                    this.PrintNodeState();
-                    Console.WriteLine("Has a result? " + this.State.HasAResult + ". State already explored? " + State.ExploredStates.Contains(this.State) + " - not adding a layer");
-                    if (State.ExploredStates.Contains(this.State))
-                    {
-                        Console.WriteLine("Explored by State: ");
-                        State.ExploredStates.First(es => es.Equals(this.State)).PrintNodeState();
-                    }
-                    Console.ReadLine();
-                }
+                Console.Clear();
+                this.PrintNodeState();
+                Console.WriteLine("Does not have a result, and has not been explored yet - adding a layer...");
+                Console.ReadLine();
             }
-            else
+
+            var possibleActions = Utility.Actions(this.State);
+            foreach (var action in possibleActions)
             {
-                State.ExploredStates.Add(this.State);
-                if (LayerNumber >= StartingLayer)
+                Node newNode = new Node();
+                newNode.Parent = this;
+                newNode.ID = Interlocked.Increment(ref StaticID);
+                newNode.LayerNumber = newNode.Parent.LayerNumber + 1;
+                //newNode.Player = this.Parent == null ? Token.Letter.X : SetPlayer(this.Player);
+                State newState = new State();
+
+                newState.Tokens = new Token[3, 3];
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        newState.Tokens[i, j] = State.Tokens[i, j];
+                    }
+                }
+
+                //newNode.State = Utility.Result(newState, new Action(action.X, action.Y, new Token() { LetterValue = newNode.Player }));
+                newNode.State = Utility.Result(newState, new Action(action.X, action.Y, token));
+
+                newNode.State.HasAResult = Utility.HasResult(newNode.State);
+
+                //if (newNode.State.HasAResult)
+                //{
+                //    if (Utility.HasAWinner(newNode.State) && newNode.GetCurrentTurn().LetterValue == Token.Letter.X)
+                //    {
+                //        newNode.Winner = 1;
+                //    }
+                //    else if (Utility.HasAWinner(newNode.State) && newNode.GetCurrentTurn().LetterValue == Token.Letter.O)
+                //    {
+                //        newNode.Winner = -1;
+                //    }
+                //    else
+                //    {
+                //        newNode.Winner = 0;
+                //    }
+
+                //    if (LayerNumber >= StartingLayer)
+                //    {
+                //        Console.Clear();
+                //        Console.WriteLine("New Node at layer " + LayerNumber + " with ID " + ID + " has a result: " + newNode.Winner);
+                //        newNode.State.PrintNodeState();
+                //        Console.WriteLine("Adding State:");
+                //        newNode.State.PrintNodeState();
+                //        Console.WriteLine("to Parent State:");
+                //        State.PrintNodeState();
+                //        Console.ReadLine();
+                //    }
+                //}
+
+                if (!newNode.State.HasAResult && LayerNumber >= StartingLayer)
                 {
                     Console.Clear();
-                    this.PrintNodeState();
-                    Console.WriteLine("Does not have a result, and has not been explored yet - adding a layer...");
+                    Console.WriteLine("Adding State:");
+                    newNode.PrintNodeState();
+                    Console.WriteLine("to Parent State:");
+                    Console.WriteLine("at layer: " + LayerNumber);
+                    State.PrintNodeState();
                     Console.ReadLine();
                 }
 
-                var possibleActions = Utility.Actions(this.State);
-                foreach (var action in possibleActions)
-                {
-                    Node newNode = new Node();
-                    newNode.Parent = this;
-                    newNode.ID = Interlocked.Increment(ref StaticID);
-                    newNode.LayerNumber = newNode.Parent.LayerNumber + 1;
-                    newNode.Player = this.Parent == null ? Token.Letter.X : SetPlayer(this.Player);
-                    State newState = new State();
-
-                    newState.Tokens = new Token[3, 3];
-                    for (int i = 0; i < 3; i++)
-                    {
-                        for (int j = 0; j < 3; j++)
-                        {
-                            newState.Tokens[i, j] = State.Tokens[i, j];
-                        }
-                    }
-
-                    newNode.State = Utility.Result(newState, new Action(action.X, action.Y, new Token() { LetterValue = newNode.Player }));
-
-                    newNode.State.HasAResult = Utility.HasResult(newNode.State);
-
-                    if (newNode.State.HasAResult)
-                    {
-                        if (Utility.HasAWinner(newNode.State) && newNode.Player == Token.Letter.X)
-                        {
-                            newNode.Winner = 1;
-                        }
-                        else if (Utility.HasAWinner(newNode.State) && newNode.Player == Token.Letter.O)
-                        {
-                            newNode.Winner = -1;
-                        }
-                        else
-                        {
-                            newNode.Winner = 0;
-                        }
-
-                        if (LayerNumber >= StartingLayer)
-                        {
-                            Console.Clear();
-                            Console.WriteLine("New Node at layer " + LayerNumber + " with ID " + ID + " has a result: " + newNode.Winner);
-                            newNode.State.PrintNodeState();
-                            Console.WriteLine("Adding State:");
-                            newNode.State.PrintNodeState();
-                            Console.WriteLine("to Parent State:");
-                            State.PrintNodeState();
-                            Console.ReadLine();
-                        }
-                    }
-
-                    if (!newNode.State.HasAResult && LayerNumber >= StartingLayer)
-                    {
-                        Console.Clear();
-                        Console.WriteLine(newNode.Player + " Adding State:");
-                        newNode.PrintNodeState();
-                        Console.WriteLine("to Parent State:");
-                        Console.WriteLine("at layer: " + LayerNumber);
-                        State.PrintNodeState();
-                        Console.ReadLine();
-                    }
-
-                    this.ChildNodes
-                        .Add(newNode);
-                }
+                this.ChildNodes
+                    .Add(newNode);
             }
         }
 
         public Token.Letter SetPlayer(Token.Letter t) => t == Token.Letter.X ? Token.Letter.O : Token.Letter.X;
-
-
-        //public Token.Letter SetPlayer(Token.Letter t)
-        //{
-        //    if (Parent != null)
-        //    {
-        //        return (t == Token.Letter.X ? Token.Letter.O : Token.Letter.X);
-        //    }
-        //    return Token.Letter.X;
-        //}
-
-        //public override bool Equals(object? obj)
-        //{
-        //    if (obj is Node other)
-        //    {
-        //        return State.Tokens.Cast<Token>().Select(t => t.LetterValue)
-        //            .SequenceEqual(other.State.Tokens.Cast<Token>().Select(t => t.LetterValue));
-        //    }
-        //    return false;
-        //}
-
 
         public override bool Equals(object? obj)
         {
@@ -257,13 +201,6 @@ namespace TicTacToeAStarJeHicks
                     State.Tokens[2, 1].LetterValue.Equals(other.State.Tokens[2, 1].LetterValue) &&
                     State.Tokens[2, 2].LetterValue.Equals(other.State.Tokens[2, 2].LetterValue);
 
-                //if (matching)
-                //{
-                //    State.PrintNodeState();
-                //    other.State.PrintNodeState();
-                //    Console.WriteLine("Nodes match? " + matching);
-                //    Console.ReadLine();
-                //}
                 return matching;
             }
             return false;
@@ -273,7 +210,7 @@ namespace TicTacToeAStarJeHicks
         {
             int nextMove = 0;
             //Console.WriteLine("Layer: " + LayerNumber);
-            Console.WriteLine("Type a number to select space:");
+            //Console.WriteLine("Type a number to select space:");
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
@@ -302,9 +239,6 @@ namespace TicTacToeAStarJeHicks
             Console.WriteLine();
             //Console.ReadLine();
         }
-
-        //public override int GetHashCode() =>
-        //    HashCode.Combine(State.Tokens.Cast<Token>().Select(t => t.LetterValue).ToArray());
 
 
         public override int GetHashCode()
@@ -399,67 +333,6 @@ namespace TicTacToeAStarJeHicks
             return true; // No empty spaces, so it's a draw
         }
 
-
-
-
-        public int CalculateHeuristic(Token.Letter player)
-        {
-            // Heuristic example: favor states where the player has more chances to win
-            int score = 0;
-
-            // Add logic to check rows, columns, and diagonals for potential win opportunities
-            // For example, count lines where the player can still win (no opponent's marks in the line).
-
-            return score;
-        }
-
-        //public void AStarSearch(Token.Letter player, Node startNode)
-        //{
-        //    // Priority queue to hold nodes sorted by f(n)
-        //    var openSet = new SortedSet<Node>(new NodeComparer());
-
-        //    // Initialize the first node and add it to the queue
-        //    startNode.gCost = 0;
-        //    startNode.hCost = startNode.CalculateHeuristic(player);
-        //    startNode.fCost = startNode.gCost + startNode.hCost;
-        //    openSet.Add(startNode);
-
-        //    // While there are nodes to explore
-        //    while (openSet.Count > 0)
-        //    {
-        //        // Get the node with the lowest f(n)
-        //        Node currentNode = openSet.Min;
-        //        openSet.Remove(currentNode);
-
-        //        // Check if it's a win or terminal state
-        //        if (currentNode.IsTerminal())
-        //        {
-        //            // Goal reached, reconstruct the path or process the result
-        //            return;
-        //        }
-
-        //        // Explore neighbors
-        //        foreach (var neighbor in currentNode.GetNeighbors())
-        //        {
-        //            // Calculate costs
-        //            int tentativeGCost = currentNode.gCost + 1; // Move cost, depth increase
-
-        //            if (tentativeGCost < neighbor.gCost)
-        //            {
-        //                // This path to neighbor is better, update its costs
-        //                neighbor.gCost = tentativeGCost;
-        //                neighbor.hCost = neighbor.CalculateHeuristic(player);
-        //                neighbor.fCost = neighbor.gCost + neighbor.hCost;
-
-        //                if (!openSet.Contains(neighbor))
-        //                {
-        //                    openSet.Add(neighbor);
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-
         public class NodeComparer : IComparer<Node>
         {
             public int Compare(Node x, Node y)
@@ -474,60 +347,79 @@ namespace TicTacToeAStarJeHicks
             }
         }
 
-        //public List<Node> GetNeighbors(int layer)
-        //{
-        //    List<Node> neighbors = new List<Node>();
-
-        //    // Get the current player (X or O)
-        //    Token.Letter currentPlayer = this.Player;
-
-        //    // Iterate over the 2D board to find empty cells
-        //    for (int row = 0; row < State.Tokens.GetLength(0); row++)
-        //    {
-        //        for (int col = 0; col < State.Tokens.GetLength(1); col++)
-        //        {
-        //            if (State.Tokens[row, col].LetterValue == Token.Letter.a) // Assuming 'a' represents an empty cell
-        //            {
-        //                // Create a new board configuration by placing the current player's mark
-        //                Token.Letter[,] newBoard = (Token.Letter[,])State.Tokens.Clone();
-        //                newBoard[row, col] = currentPlayer;
-
-        //                // Create a new node for this neighbor
-        //                Node neighbor = new Node(newBoard, GetNextPlayer(currentPlayer));
-
-        //                // Optionally calculate costs here if not done in AStarSearch
-        //                neighbor.gCost = this.gCost + 1; // Depth increase
-        //                neighbor.hCost = neighbor.CalculateHeuristic(currentPlayer);
-        //                neighbor.fCost = neighbor.gCost + neighbor.hCost;
-
-        //                // Add the neighbor to the list
-        //                neighbors.Add(neighbor);
-        //            }
-        //        }
-        //    }
-
-        //    return neighbors;
-        //}
-
-        public Token.Letter GetNextPlayer(Token.Letter currentPlayer)
+        public Token GetCurrentTurn()
         {
-            // Assuming LetterValue.X represents player X and LetterValue.O represents player O
-            if (currentPlayer == Token.Letter.X)
+            //int xCount = 0;
+            //int oCount = 0;
+            int aCount = 0;
+
+            // Count the number of X's and O's in the current board state
+            for (int row = 0; row < 3; row++)
             {
-                return Token.Letter.O;
+                for (int col = 0; col < 3; col++)
+                {
+                    //if (State.Tokens[row, col].LetterValue == Token.Letter.X)
+                    //{
+                    //    xCount++;
+                    //}
+                    //else if (State.Tokens[row, col].LetterValue == Token.Letter.O)
+                    //{
+                    //    oCount++;
+                    //}
+                    if (State.Tokens[row, col].LetterValue == Token.Letter.a)
+                    {
+                        aCount++;
+                    }
+                }
+            }
+
+            // Determine whose turn it is
+            if (aCount % 2 == 0)
+            {
+                return new Token() { LetterValue = Token.Letter.O };  // X's turn
             }
             else
             {
-                return Token.Letter.X;
+                return new Token() { LetterValue = Token.Letter.X };  // O's turn
             }
         }
 
-        internal Node Copy()
+        public Token GetNextTurn()
         {
-            throw new NotImplementedException();
+            //int xCount = 0;
+            //int oCount = 0;
+            int aCount = 0;
+
+            // Count the number of X's and O's in the current board state
+            for (int row = 0; row < 3; row++)
+            {
+                for (int col = 0; col < 3; col++)
+                {
+                    //if (State.Tokens[row, col].LetterValue == Token.Letter.X)
+                    //{
+                    //    xCount++;
+                    //}
+                    //else if (State.Tokens[row, col].LetterValue == Token.Letter.O)
+                    //{
+                    //    oCount++;
+                    //}
+                    if (State.Tokens[row, col].LetterValue == Token.Letter.a)
+                    {
+                        aCount++;
+                    }
+                }
+            }
+
+            // Determine whose turn it is
+            if (aCount % 2 == 0)
+            {
+                return new Token() { LetterValue = Token.Letter.O};  // X's turn
+            }
+            else
+            {
+                return new Token() { LetterValue = Token.Letter.X };  // O's turn
+            }
         }
-
-
 
         // end ChatGPT Section
     }

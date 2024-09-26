@@ -17,7 +17,7 @@ namespace TicTacToeAStarJeHicks
 
         public int GetMove()
         {
-            Console.WriteLine("Enter Move:");
+            Console.WriteLine("Type a number to select space:");
             var pressedKey = Console.ReadLine();
             return int.Parse(pressedKey);
         }
