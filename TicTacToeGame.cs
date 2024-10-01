@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace TicTacToeAStarJeHicks
@@ -17,8 +18,13 @@ namespace TicTacToeAStarJeHicks
 
         public int GetMove()
         {
-            Console.WriteLine("Type a number to select space:");
-            var pressedKey = Console.ReadLine();
+            string pressedKey = "";
+            while (!Regex.IsMatch(pressedKey, "^[0-8]$"))
+            {
+                Console.WriteLine("Type a number to select space:");
+
+                pressedKey = Console.ReadLine();
+            }
             return int.Parse(pressedKey);
         }
 
