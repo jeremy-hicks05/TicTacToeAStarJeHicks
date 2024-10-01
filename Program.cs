@@ -62,12 +62,14 @@
 
             Node gameNode = rootNode;
 
+            /*Select 7, 4, 4 to demonstrate how it looks ahead and "knows" it's going to win */
+            
             while (gameNode != null && !gameNode.IsTerminal())
             {
                 gameNode.PrintNodeState();
                 gameNode = gameNode.ChildNodes[game.GetMove()];
                 //gameNode.PrintNodeState();
-                //gameNode = ticTac.GetBestMove(gameNode);
+                //gameNode = ticTac.GetBestMove(gameNode, AIToken);
                 if (gameNode != null && !gameNode.IsTerminal())
                 {
                     //gameNode.Player = gameNode.Player == Token.Letter.X ? Token.Letter.O : Token.Letter.X;

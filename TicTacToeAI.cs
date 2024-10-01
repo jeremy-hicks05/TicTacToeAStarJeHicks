@@ -28,8 +28,6 @@ namespace TicTacToeAStarJeHicks
                 return EvaluateGameState(node);
             }
 
-            //if (isMaximizingPlayer)
-            //{
             int bestScore;
 
             if (token.LetterValue == new Token() { LetterValue = Token.Letter.X }.LetterValue)
@@ -44,7 +42,6 @@ namespace TicTacToeAStarJeHicks
             {
                 //Console.WriteLine("Considering child within Minimax function:");
                 //child.PrintNodeState();
-                //int childScore = Minimax(child, false);
                 int childScore = Minimax(child, child.GetCurrentTurn());
 
                 if (token.LetterValue == Token.Letter.X)
@@ -68,7 +65,7 @@ namespace TicTacToeAStarJeHicks
             Node bestMove = null;
             int bestValue;
 
-            currentNode.PrintNodeState();
+            //currentNode.PrintNodeState();
 
             if (token.LetterValue == Token.Letter.X)
             {
@@ -95,29 +92,28 @@ namespace TicTacToeAStarJeHicks
                 //Console.WriteLine("Selected with moveValue:");
                 //Console.WriteLine(moveValue);
 
-                if (
-                    token.LetterValue == Token.Letter.X && (moveValue > bestValue))
+                if (token.LetterValue == Token.Letter.X && (moveValue > bestValue))
                 {
                     bestValue = moveValue;
                     bestMove = child;
-                    Console.WriteLine("Selecting move for X:");
-                    bestMove.PrintNodeState();
-                    Console.WriteLine("With value " + moveValue);
+                    //Console.WriteLine("Selecting move for X:");
+                    //bestMove.PrintNodeState();
+                    //Console.WriteLine("With value " + moveValue);
                     //bestMove.ChildNodes = currentNode.ChildNodes;
                 }
                 else if (token.LetterValue == Token.Letter.O && (moveValue < bestValue))
                 {
                     bestValue = moveValue;
                     bestMove = child;
-                    Console.WriteLine("Selecting move for O:");
-                    bestMove.PrintNodeState();
-                    Console.WriteLine("With value " + moveValue);
+                    //Console.WriteLine("Selecting move for O:");
+                    //bestMove.PrintNodeState();
+                    //Console.WriteLine("With value " + moveValue);
                     //bestMove.ChildNodes = currentNode.ChildNodes;
                 }
             }
 
-            Console.WriteLine("Best Move");
-            bestMove.PrintNodeState();
+            //Console.WriteLine("Best Move");
+            //bestMove.PrintNodeState();
             Console.WriteLine("Selected with moveValue:");
             Console.WriteLine(bestValue);
             return bestMove; // Returns the optimal move for the AI
