@@ -206,39 +206,88 @@ namespace TicTacToeAStarJeHicks
             return false;
         }
 
+        //public void PrintNodeState()
+        //{
+        //    int nextMove = 0;
+        //    //Console.WriteLine("Layer: " + LayerNumber);
+        //    //Console.WriteLine("Type a number to select space:");
+        //    for (int i = 0; i < 3; i++)
+        //    {
+        //        for (int j = 0; j < 3; j++)
+        //        {
+        //            if (State.Tokens[i, j].LetterValue == Token.Letter.a)
+        //            {
+        //                Console.BackgroundColor = ConsoleColor.Green;
+        //                Console.ForegroundColor = ConsoleColor.Black;
+        //            }
+        //            Console.Write(State.Tokens[i, j].LetterValue == Token.Letter.a ? nextMove++ : State.Tokens[i, j].LetterValue);
+        //            Console.BackgroundColor = ConsoleColor.Black;
+        //            Console.ForegroundColor = ConsoleColor.White;
+        //            if (j < 2)
+        //            {
+        //                Console.Write("|");
+        //            }
+        //        }
+        //        Console.WriteLine();
+        //    }
+        //    //if (this.State.HasAResult)
+        //    //{
+        //    //    this.State.PrintNodeState();
+        //    //    Console.WriteLine("Result: " + Winner);
+        //    //    //Console.ReadLine();
+        //    //}
+        //    Console.WriteLine();
+        //    //Console.ReadLine();
+        //}
+
         public void PrintNodeState()
         {
+            var openCoordinates = this.State.GetOpenCoordinates();
+            Dictionary<(int, int), int> moveMapping = new();  // Maps coordinates to available move numbers
             int nextMove = 0;
-            //Console.WriteLine("Layer: " + LayerNumber);
-            //Console.WriteLine("Type a number to select space:");
+
+            // Map available coordinates to dynamic numbers
+            foreach (var coord in openCoordinates)
+            {
+                moveMapping[coord] = nextMove++;
+            }
+
+            // Loop over the 3x3 board
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
                 {
+                    (int, int) coord = (i, j);  // Current position
+
                     if (State.Tokens[i, j].LetterValue == Token.Letter.a)
                     {
+                        // If the spot is available, print the dynamically assigned number
                         Console.BackgroundColor = ConsoleColor.Green;
                         Console.ForegroundColor = ConsoleColor.Black;
+                        Console.Write(moveMapping[coord]);  // Print dynamic number
                     }
-                    Console.Write(State.Tokens[i, j].LetterValue == Token.Letter.a ? nextMove++ : State.Tokens[i, j].LetterValue);
+                    else
+                    {
+                        // Print X or O for taken spaces
+                        Console.BackgroundColor = ConsoleColor.Black;
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.Write(State.Tokens[i, j].LetterValue);  // Print X or O
+                    }
+
                     Console.BackgroundColor = ConsoleColor.Black;
                     Console.ForegroundColor = ConsoleColor.White;
+
                     if (j < 2)
                     {
-                        Console.Write("|");
+                        Console.Write("|");  // Print column separator
                     }
                 }
                 Console.WriteLine();
             }
-            //if (this.State.HasAResult)
-            //{
-            //    this.State.PrintNodeState();
-            //    Console.WriteLine("Result: " + Winner);
-            //    //Console.ReadLine();
-            //}
             Console.WriteLine();
-            //Console.ReadLine();
         }
+
+
 
 
         public override int GetHashCode()

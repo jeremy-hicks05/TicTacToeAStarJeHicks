@@ -67,7 +67,7 @@
             while (gameNode != null && !gameNode.IsTerminal())
             {
                 gameNode.PrintNodeState();
-                gameNode = gameNode.ChildNodes[game.GetMove()];
+                gameNode = gameNode.ChildNodes[game.GetMove(gameNode.State.GetOpenCoordinates())];
                 //gameNode.PrintNodeState();
                 //gameNode = ticTac.GetBestMove(gameNode, AIToken);
                 if (gameNode != null && !gameNode.IsTerminal())
